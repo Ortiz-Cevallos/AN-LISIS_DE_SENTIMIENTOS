@@ -126,21 +126,88 @@
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
-\hypertarget{hello-bookdown}{%
-\section{Hello bookdown}\label{hello-bookdown}}
+\hypertarget{introducciuxf3n}{%
+\section{INTRODUCCIÓN}\label{introducciuxf3n}}
 
-All chapters start with a first-level heading followed by your chapter title, like the line above. There should be only one first-level heading (\texttt{\#}) per .Rmd file.
+El análisis de sentimiento te ayuda extraer de un texto el estado de animo del editore de ese texto.
 
-\hypertarget{a-section}{%
-\subsection{A section}\label{a-section}}
+Por ejemplo, a partir de un texto que contenga la conversación entre dos personas podemos usar la función (\texttt{qdap\textquotesingle{}s\ polarity()}) la cual califica el texto en dos escalas: \textbf{positivas y negativas}.
 
-All chapter sections start with a second-level (\texttt{\#\#}) or higher heading followed by your section title, like the sections above and below here. You can have as many as you want within a chapter.
+Noten que para aplicar esa función los input son:
++ simples carácteres o dataframe
++ agrupamiento de palabras
+
+En tanto el output es un objeto de la clase polaridad
+
+\hypertarget{el-text-mining-con-bolsas-de-palabras}{%
+\subsection{El text mining con bolsas de palabras}\label{el-text-mining-con-bolsas-de-palabras}}
+
+\textbf{Corpus} es un conjunto de texto a partir del cual se pueden aplicar varios procesos.
+
+La función (\texttt{VectorSource()}) pasa un vector de carácteres a una fuente de texto. A continuación un ejemplo:
+
+La función (\texttt{VCorpus()}) pasa una fuente de texto a un Corpus.
+
+Luego es importante limpiar tu Corpus. con funciones como: (\texttt{removePunctuation()\ y\ stripWhitespace()}) del paquete (\texttt{tm}) y la función
+(\texttt{replace\_abbreviation()}) del paquete (\texttt{qdap})
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(qdap)}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(pdftools)}
+\FunctionTok{library}\NormalTok{(stringr)}
+\FunctionTok{library}\NormalTok{(tm)}
+\CommentTok{\#pdf.text \textless{}{-} pdf\_text("muestra.pdf") }
+\CommentTok{\#write.table(pdf.text, "muestra.txt", sep=";")}
+\NormalTok{pdf.text2 }\OtherTok{\textless{}{-}} \FunctionTok{pdf\_text}\NormalTok{(}\StringTok{"muestra.pdf"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{str\_split}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{) }
+\NormalTok{pdf.text2}\OtherTok{\textless{}{-}}\FunctionTok{unlist}\NormalTok{(pdf.text2)}
+\FunctionTok{write.table}\NormalTok{(pdf.text2, }\StringTok{"muestra.txt"}\NormalTok{, }\AttributeTok{sep=}\StringTok{";"}\NormalTok{)}
+\NormalTok{tm\_define}\OtherTok{\textless{}{-}}\FunctionTok{read.csv}\NormalTok{(}\StringTok{"muestra.txt"}\NormalTok{)}
+\NormalTok{tm\_define}\OtherTok{\textless{}{-}}\NormalTok{tm\_define[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{tm\_define}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1;Text mining is the process of distilling actionable insights from text."
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tm\_vector }\OtherTok{\textless{}{-}} \FunctionTok{VectorSource}\NormalTok{(tm\_define)}
+\NormalTok{tm\_corpus }\OtherTok{\textless{}{-}} \FunctionTok{VCorpus}\NormalTok{(tm\_vector)}
+\FunctionTok{content}\NormalTok{(tm\_corpus[[}\DecValTok{1}\NormalTok{]])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1;Text mining is the process of distilling actionable insights from text."
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{clean\_corpus }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(corpus)\{}
+\NormalTok{  corpus }\OtherTok{\textless{}{-}} \FunctionTok{tm\_map}\NormalTok{(corpus, }\FunctionTok{content\_transformer}\NormalTok{(replace\_abbreviation))}
+\NormalTok{  corpus }\OtherTok{\textless{}{-}} \FunctionTok{tm\_map}\NormalTok{(corpus, removePunctuation)}
+\NormalTok{  corpus }\OtherTok{\textless{}{-}} \FunctionTok{tm\_map}\NormalTok{(corpus, removeNumbers)}
+\NormalTok{  corpus }\OtherTok{\textless{}{-}} \FunctionTok{tm\_map}\NormalTok{(corpus, removeWords, }\FunctionTok{c}\NormalTok{(}\FunctionTok{stopwords}\NormalTok{(}\StringTok{"en"}\NormalTok{), }\StringTok{"coffee"}\NormalTok{))}
+\NormalTok{  corpus }\OtherTok{\textless{}{-}} \FunctionTok{tm\_map}\NormalTok{(corpus, }\FunctionTok{content\_transformer}\NormalTok{(tolower))}
+\NormalTok{  corpus }\OtherTok{\textless{}{-}} \FunctionTok{tm\_map}\NormalTok{(corpus, stripWhitespace)}
+  \FunctionTok{return}\NormalTok{(corpus)}
+\NormalTok{\}}
+\NormalTok{tm\_clean }\OtherTok{\textless{}{-}} \FunctionTok{clean\_corpus}\NormalTok{(tm\_corpus)}
+\FunctionTok{content}\NormalTok{(tm\_clean[[}\DecValTok{1}\NormalTok{]])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "text mining process distilling actionable insights text"
+\end{verbatim}
 
 \hypertarget{an-unnumbered-section}{%
 \subsubsection*{An unnumbered section}\label{an-unnumbered-section}}
 \addcontentsline{toc}{subsubsection}{An unnumbered section}
-
-Chapters and sections are numbered by default. To un-number a heading, add a \texttt{\{.unnumbered\}} or the shorter \texttt{\{-\}} at the end of the heading, like in this section.
 
 \hypertarget{cross}{%
 \section{Cross-references}\label{cross}}

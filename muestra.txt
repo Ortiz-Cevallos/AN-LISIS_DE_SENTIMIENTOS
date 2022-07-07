@@ -1,0 +1,8 @@
+"x"
+"1";"Text mining is the process of distilling actionable insights from text."
+"2";""
+"3";""
+"4";""
+"5";""
+"6";"                                                       1"
+"7";""
