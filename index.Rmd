@@ -1,0 +1,16 @@
+--- 
+title: "Sentimientos en informes de estabilidad financiera"
+author: "[Luis Ortiz-Cevallos](https://ortiz-cevallos.github.io/MYSELF/)"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+pandoc_args: [
+      "--number-offset=1,0"
+      ]
+code_download: true
+code_folding: hide
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+---

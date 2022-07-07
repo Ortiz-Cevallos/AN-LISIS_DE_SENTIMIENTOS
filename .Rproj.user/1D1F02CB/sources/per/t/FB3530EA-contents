@@ -1,0 +1,6 @@
+book_filename: "index"
+chapter_name: "Capítulo"
+output_dir: docs
+rmd_files: ["index.Rmd", "01-intro.Rmd", "02-cross-refs.Rmd", "03-parts.Rmd"]
+clean: [bookdown.bbl]
+new_session: yes
